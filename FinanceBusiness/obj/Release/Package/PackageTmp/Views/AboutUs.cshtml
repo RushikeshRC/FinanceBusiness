@@ -1,0 +1,138 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Umbraco.Web.PublishedModels.AboutUs>
+@{
+    Layout = "Master.cshtml";
+
+    List<TeamMember> memberList =
+        Model.Children().OfType<Members>().First().Children<TeamMember>().ToList();
+
+    Banner aboutBanner = Model.Slides.First();
+}
+
+@* the fun starts here *@
+
+
+<!-- Page Content -->
+<div class="page-heading header-text" style="background-image:url(@aboutBanner.BannerImage.Url())">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>@aboutBanner.BannerTitle</h1>
+                <span>@aboutBanner.BannerText</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="more-info about-info">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="more-info-content">
+                    <div class="row">
+                        <div class="col-md-6 align-self-center">
+                            <div class="right-content">
+                                <span>@Model.CardSubTitle</span>
+                                <h2>@Model.CardTitle</h2>
+                                <p>
+                                   @Model.CardDescription
+                                </p>
+                                <a href="@Model.CardCtalink" class="filled-button">@Model.CardCtabutton</a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="left-image">
+                                <img src="@Model.CardImage.Url()" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="team">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-heading">
+                    <h2>@Model.TeamComponentHeading</h2>
+                    <span>@Model.TeamComponentSubHeading</span>
+                </div>
+            </div>
+            @foreach (TeamMember m in @memberList) 
+            {
+                <div class="col-md-4">
+                    <div class="team-item">
+                        <img src="@m.Image.Url()" alt="">
+                        <div class="down-content">
+                            <h4>@m.TeamMemberName</h4>
+                            <spawn>@m.TeamMemberDesignation</spawn>
+                            <p>@m.Description</p>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+        </div>
+    </div>
+</div>
+
+<div class="fun-facts">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="left-content">
+                    <span>@Model.StatSubTitle</span>
+                    <h2>@Model.StatTitle</h2>
+                    <p>
+                       @Model.StatDescription
+                    </p>
+                    <a href="#" class="filled-button">Read More</a>
+                </div>
+            </div>
+            <div class="col-md-6 align-self-center">
+                <div class="row">
+                    @foreach (StatisticTile s in @Model.StatisticsTiles)
+            {
+                    <div class="col-md-6">
+                        <div class="count-area-content">
+                            <div class="count-digit">@s.Metrics</div>
+                            <div class="count-title">@s.Attribute</div>
+                        </div>
+                    </div>
+            }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="testimonials">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-heading">
+                    <h2>What they say <em>about us</em></h2>
+                    <span>testimonials from our greatest clients</span>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="owl-testimonials owl-carousel">
+                    @foreach (Testimonial t in @Model.Tslides)
+            {
+                <div class="testimonial-item">
+                    <div class="inner-content">
+                        <h4>@t.TName</h4>
+                        <span>@t.Tdesignation</span>
+                        <p>@t.TTestimonial</p>
+                    </div>
+                    <img src="http://placehold.it/60x60" alt="">
+                </div>
+            }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,299 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Umbraco.Web.PublishedModels.Home>
+
+@using imageMedia = Umbraco.Core.Models.MediaWithCrops;
+
+@{
+    Layout = "Master.cshtml";
+}
+
+<!-- Page Content -->
+<!-- Banner Starts Here -->
+<div class="main-banner header-text" id="top">
+    <div class="Modern-Slider">
+
+        @*@foreach (Banner slide in @Model.Slides)
+        {
+            <!-- Item -->
+            <!--<div class="item item-1">
+                <div class="img-fill" style="background-image:url(@slide.BannerImage.Url())">
+                    <div class="text-content">
+                        <h6>@slide.BannerSubTitle</h6>
+                        <h4>@slide.BannerTitle</h4>
+                        <p>@slide.BannerText</p>
+                        <a href="#" class="filled-button">contact us</a>
+                    </div>
+                </div>
+            </div>
+        }-->*@
+
+        @foreach (Banner slide in @Model.Slides)
+        {
+            <!-- Item -->
+        <div class="item item-1">
+                @if (slide.BannerImage != null) { 
+                        <div class="img-fill" style="background-image:url(@slide.BannerImage.Url())">
+                            <div class="text-content">
+                                <h6>@slide.BannerSubTitle</h6>
+                                <h4>@slide.BannerTitle</h4>
+                                <p>@slide.BannerText</p>
+                                <a href="#" class="filled-button">contact us</a>
+                            </div>
+                        </div>
+                   //</div>
+                
+        }
+            </div>
+        }
+        </div>
+        <!-- Banner Ends Here -->
+
+        <div class="request-form">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4>@Model.ReqContainerTitle</h4>
+                        <span>@Model.ReqContainerSubtitle</span>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="#" class="border-button">contact</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="services">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="section-heading">
+                            <h2>@Model.ComponentTitle</h2>
+                            <span>@Model.ComponentSubtitle</span>
+                        </div>
+                    </div>
+                    @foreach (ServiceTile tile in @Model.ServiceTiles)
+                    {
+                        <div class="col-md-4">
+                            <div class="service-item">
+                                <img src="@(((@imageMedia)@tile.TiledService.Value("serviceImage")).Url())" alt="">
+                                <div class="down-content">
+                                    <h4>@tile.TiledService.Value("serviceName")</h4>
+                                    <p>@tile.TiledService.Value("serviceDescriptionShort")</p>
+                                    <a href="@tile.CtaLink.Url" class="filled-button">@tile.CtaText</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="fun-facts">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="left-content">
+                            <span>@Model.StatSubTitle</span>
+                            <h2>@Model.StatTitle</h2>
+                            <p>
+                                @Model.StatDescription
+                            </p>
+                            <a href="" class="filled-button">Read More</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 align-self-center">
+                        <div class="row">
+                            @foreach (StatisticTile s in @Model.StatisticsTiles)
+                            {
+                                <div class="col-md-6">
+                                    <div class="count-area-content">
+                                        <div class="count-digit">@s.Metrics</div>
+                                        <div class="count-title">@s.Attribute</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="more-info">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="more-info-content">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="left-image">
+                                        <img src="@Model.CardImage.Url" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 align-self-center">
+                                    <div class="right-content">
+                                        <span>@Model.CardSubTitle</span>
+                                        <h2>@Model.CardTitle</em></h2>
+                                        <p>@Model.CardDescription</p>
+                                        <a href="@Model.CardCtalink" class="filled-button">@Model.CardCtabutton</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonials">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="section-heading">
+                            <h2>@Model.Ttitle</h2>
+                            <span>@Model.TsubTitle</span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="owl-testimonials owl-carousel">
+                            @foreach (Testimonial t in @Model.Tslides)
+                            {
+                                <div class="testimonial-item">
+                                    <div class="inner-content">
+                                        <h4>@t.TName</h4>
+                                        <span>@t.Tdesignation</span>
+                                        <p>@t.TTestimonial</p>
+                                    </div>
+                                    <img src="http://placehold.it/60x60" alt="">
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="callback-form">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="section-heading">
+                            <h2>@Model.FormTitle</h2>
+                            <span>@Model.FormSubTitle</span>
+                        </div>
+                    </div>
+
+                    @Umbraco.RenderMacro("renderUmbracoForm", new { FormGuid = Model.FormPicker, FormTheme = "bootstrap3-horizontal", ExcludeScripts = "1" })
+                    @*<div class="col-md-12">
+                                    <div class="contact-form">
+                                        <form id="contact" action="" method="get">
+                                            <div class="row">
+                                                <div class="col-lg-4 col-md-12 col-sm-12">
+                                                    <fieldset>
+                                                        <input name="name" type="text" class="form-control" id="name" placeholder="Full Name" required="">
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-4 col-md-12 col-sm-12">
+                                                    <fieldset>
+                                                        <input name="email" type="text" class="form-control" id="email" pattern="" placeholder="E-Mail Address" required="">
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-4 col-md-12 col-sm-12">
+                                                    <fieldset>
+                                                        <input name="subject" type="text" class="form-control" id="subject" placeholder="Subject" required="">
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <fieldset>
+                                                        <textarea name="message" rows="6" class="form-control" id="message" placeholder="Your Message" required=""></textarea>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <fieldset>
+                                                        <button type="submit" id="form-submit" class="filled-button">Send Message</button>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+
+
+                    @*<div class="callback-form">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="section-heading">
+                                        <h2>Request a <em>call back</em></h2>
+                                        <span>Etiam suscipit ante a odio consequat</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="contact-form">
+                                        <form id="contact" action="" method="post">
+                                            <div class="row">
+                                                <div class="col-lg-4 col-md-12 col-sm-12">
+                                                    <fieldset>
+                                                        <input name="name" type="text" class="form-control" id="name" placeholder="Full Name" required="">
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-4 col-md-12 col-sm-12">
+                                                    <fieldset>
+                                                        <input name="email" type="text" class="form-control" id="email" placeholder="E-Mail Address" required="">
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-4 col-md-12 col-sm-12">
+                                                    <fieldset>
+                                                        <input name="subject" type="text" class="form-control" id="subject" placeholder="Subject" required="">
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <fieldset>
+                                                        <textarea name="message" rows="6" class="form-control" id="message" placeholder="Your Message" required=""></textarea>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <fieldset>
+                                                        <button type="submit" id="form-submit" class="border-button">Send Message</button>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+
+                    <div class="partners">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="owl-partners owl-carousel">
+
+                                        <div class="partner-item">
+                                            <img src="assets/images/client-01.png" title="1" alt="1">
+                                        </div>
+
+                                        <div class="partner-item">
+                                            <img src="assets/images/client-01.png" title="2" alt="2">
+                                        </div>
+
+                                        <div class="partner-item">
+                                            <img src="assets/images/client-01.png" title="3" alt="3">
+                                        </div>
+
+                                        <div class="partner-item">
+                                            <img src="assets/images/client-01.png" title="4" alt="4">
+                                        </div>
+
+                                        <div class="partner-item">
+                                            <img src="assets/images/client-01.png" title="5" alt="5">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>

@@ -1,0 +1,37 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using Umbraco.Core.Models.PublishedContent
+@using Umbraco.Web
+
+
+@{ 
+    var serviceCatalog = Model.MacroParameters["serivceList"].ToString();
+    var serviceNode = Umbraco.Content(serviceCatalog);
+
+    var serviceList = serviceNode.Children().ToList();
+
+    //List<Services> services =  
+
+}
+
+@*<h3>List of Services : @serviceNode.Name</h3>
+
+        @foreach(var x in serviceList)
+            {
+                <p>
+                    @x.Name
+                </p>
+            }*@
+
+@*
+@if (selection.Length > 0)
+{
+    <ul>
+        @foreach (var item in selection)
+        {
+            <li>
+                <a href="@item.Url">@item.Name</a>
+            </li>
+        }
+    </ul>
+}
+*@

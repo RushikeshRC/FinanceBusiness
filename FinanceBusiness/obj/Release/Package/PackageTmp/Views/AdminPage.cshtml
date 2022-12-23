@@ -1,0 +1,37 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using FinanceBusiness.Controllers;
+@{
+    Layout = null;
+    //var memberGroup = Request["memberGroup"];
+}
+
+<!-- Page Content -->
+<div>
+    <h1>Admin Page</h1>
+</div>
+
+<br />
+<br />
+<br />
+
+@using (Html.BeginUmbracoForm<AdminDashboardController>("DisplayMember", "AdminDashboard", FormMethod.Post))
+{
+        <label for="memberGroup">Select a member group:</label>
+        <select id="memberGroup" name="Role">
+            <option value="Group1">Premium</option>
+            <option value="Group2">Executive</option>
+        </select>
+        <button type="submit" id="getMembersButton">Get Members</button>  
+}
+
+<div>
+    @if (ViewBag.memberList != null)
+    {
+        foreach (var member in ViewBag.memberList)
+        {
+            <p>@member.Username</p>
+        }
+    }
+</div>
+
+

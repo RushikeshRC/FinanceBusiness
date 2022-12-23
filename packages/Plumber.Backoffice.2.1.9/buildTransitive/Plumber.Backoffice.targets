@@ -1,0 +1,123 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <PlumberContentFilesPath>$(MSBuildThisFileDirectory)..\Content\App_Plugins\Plumber\**\*.*</PlumberContentFilesPath>
+    <PlumberViewsPath>$(MSBuildThisFileDirectory)..\Content\Views\**\*.*</PlumberViewsPath>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition=" '$(MSBuildVersion.Substring(0,2))' >= 16 Or
+    ('$(MSBuildVersion.Substring(0,2))' == 15 And '$(MSBuildVersion.Substring(3,1))' >= 8)">
+      <PropertyGroup>
+        <TaskFactory>RoslynCodeTaskFactory</TaskFactory>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <TaskFactory>CodeTaskFactory</TaskFactory>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  
+  <UsingTask
+    TaskName="CleanUnmodifiedEmailTemplates"
+    TaskFactory="$(TaskFactory)"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+    <ParameterGroup>
+      <TargetPath ParameterType="System.String" Required="true"/>
+      <FilesToDelete ParameterType="System.String[]" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          var diInfo = new DirectoryInfo(TargetPath);
+          if (diInfo.Exists)
+          {
+              var fiInfo = diInfo.GetFiles();              
+              FilesToDelete = fiInfo.Where(file => file.LastWriteTime < file.CreationTime).Select(file => file.FullName).ToArray();
+          }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <!-- Returns a filters list of file names to copy, keeping only those items where the local copy has not been modified -->
+  <UsingTask
+    TaskName="FindUnmodifiedEmailTemplates"
+    TaskFactory="$(TaskFactory)"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+    <ParameterGroup>
+      <SourcePath ParameterType="System.String" Required="true" />
+      <TargetPath ParameterType="System.String" Required="true" />
+      <FilesToCopy ParameterType="System.String[]" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[          
+          var targetInfo = new DirectoryInfo(TargetPath);          
+          var sourceInfo = new DirectoryInfo(SourcePath);
+          
+          if (targetInfo.Exists && sourceInfo.Exists) {          
+            var targetFiles = targetInfo.GetFiles();    
+            var sourceFiles = sourceInfo.GetFiles();
+
+            var modifiedLocal = targetFiles.Where(file => file.LastWriteTime > file.CreationTime).Select(file => file.Name).ToArray();   
+            FilesToCopy = sourceFiles.Where(file => !modifiedLocal.Contains(file.Name)).Select(file => file.FullName).ToArray();     
+          }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="CopyPlumberPackageAssets" BeforeTargets="Build">
+    <ItemGroup>
+      <PlumberContentFiles Include="$(PlumberContentFilesPath)" />
+      <PlumberViewFiles Include="$(PlumberViewsPath)" />
+    </ItemGroup>
+
+    <Message Text="Copying Plumber package files: $(PlumberContentFilesPath) - @(PlumberContentFiles->Count()) files" Importance="high" />
+    <Warning Text="No package files found in $(PlumberContentFilesPath)" Condition="@(PlumberContentFiles->Count()) == 0" />
+    <Warning Text="No view files found in $(PlumberViewsPath)" Condition="@(PlumberViewFiles->Count()) == 0" />
+
+    <Copy
+          SourceFiles="@(PlumberContentFiles)"
+          DestinationFiles="@(PlumberContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\Plumber\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+
+    <FindUnmodifiedEmailTemplates SourcePath="$(MSBuildThisFileDirectory)..\Content\Views\Partials\WorkflowEmails"
+                                  TargetPath="$(MSBuildProjectDirectory)\Views\Partials\WorkflowEmails">
+      <Output TaskParameter="FilesToCopy" ItemName="ViewsToCopy" />
+    </FindUnmodifiedEmailTemplates>
+
+    <Message Text="Copying Plumber view files: $(PlumberViewsPath) - found @(PlumberViewFiles->Count()) files, copying @(ViewsToCopy->Count()) files (files with local changes are ignored)" Importance="high" />
+
+    <Copy
+      SourceFiles="@(ViewsToCopy)"
+      DestinationFolder="$(MSBuildProjectDirectory)\Views\Partials\WorkflowEmails"
+      SkipUnchangedFiles="true" />
+  </Target>
+
+  <!-- Clean deletes everything other than the .lic and .key files -->
+  <!-- Email templates are ignored, as these may have changed -->
+  <Target Name="ClearPlumberPackageAssets" BeforeTargets="Clean">
+    <ItemGroup>
+      <PlumberBackofficeDir Include="$(MSBuildProjectDirectory)\App_Plugins\Plumber\Backoffice" />
+      <PlumberLangDir Include="$(MSBuildProjectDirectory)\App_Plugins\Plumber\Lang" />
+    </ItemGroup>
+    <Message Text="Clear old Plumber data - license and key files are safe"  Importance="high" />
+    <RemoveDir Directories="@(PlumberBackofficeDir)"  />
+    <RemoveDir Directories="@(PlumberLangDir)"  />
+    <Delete Files="$(MSBuildProjectDirectory)\App_Plugins\Plumber\package.manifest" />
+
+    <Message Text="Clear unmodified Plumber email templates" Importance="high" />
+    <CleanUnmodifiedEmailTemplates TargetPath="$(MSBuildProjectDirectory)\Views\Partials\WorkflowEmails">
+      <Output TaskParameter="FilesToDelete" ItemName="ViewsToDelete" />
+    </CleanUnmodifiedEmailTemplates>
+    <Delete Files="@(ViewsToDelete)" />
+  </Target>
+
+</Project>
